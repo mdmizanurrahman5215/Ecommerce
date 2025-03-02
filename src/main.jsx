@@ -1,0 +1,17 @@
+
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App';
+import { AppProvider } from './context/ProductContext';
+import { FilterContextProvider } from './context/FilterContext';
+
+
+createRoot(document.getElementById('root')).render(
+  <AppProvider>
+    <FilterContextProvider>
+    <App/>
+    </FilterContextProvider>
+  </AppProvider>
+
+ 
+)
