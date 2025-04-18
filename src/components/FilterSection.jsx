@@ -1,27 +1,34 @@
 import styled from "styled-components";
-// import { FaCheck } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 import { useFilterContext } from "../context/FilterContext";
+import FormatPrice from "../Helpers/FormatPrice";
+import { Button } from "../styles/Button";
 
 const FilterSection = () => {
   const {
-    filters: { text },
+    filters: { text, category, color, price, maxPrice, minPrice},
     updateFilterValue,
     all_products,
+    clearFilters,
+  } = useFilterContext();
 
-  }=useFilterContext()
+  const getUniqueData = (data, attr) => {
+    let newVal = data.map((curElem) => {
+      return curElem[attr];
+    });
+    if (attr === "colors") {
+      newVal = newVal.flat();
+    }
 
-const getCategoryProduct=(data, property)=>{
-  let newVal = data.map((curElem)=>{
-  return curElem[property];
-  })
-   return ( newVal=["All", ...new Set(newVal)])
-  // console.log(newVal);
-}
+    return ["all", ...new Set(newVal)];
+  };
 
+  const categoryData = getUniqueData(all_products, "category");
+  const companyData = getUniqueData(all_products, "company");
+  const colorsData = getUniqueData(all_products, "colors");
 
+  console.log(colorsData);
 
-  const categoryData = getCategoryProduct(all_products, "category")
-  const companyData = getCategoryProduct(all_products, "company")
   // const colorsData = getCategoryProduct(all_products, "color")
   // const {
   //   filters: { text, category, color },
@@ -77,7 +84,8 @@ const getCategoryProduct=(data, property)=>{
                 name="category"
                 value={curElem}
                 // className={curElem === category ? "active" : ""}
-                onClick={updateFilterValue}>
+                onClick={updateFilterValue}
+              >
                 {curElem}
               </button>
             );
@@ -93,7 +101,8 @@ const getCategoryProduct=(data, property)=>{
             name="company"
             id="company"
             className="filter-company--select"
-            onClick={updateFilterValue}>
+            onChange={updateFilterValue}
+          >
             {companyData.map((curElem, index) => {
               return (
                 <option key={index} value={curElem} name="company">
@@ -104,9 +113,63 @@ const getCategoryProduct=(data, property)=>{
           </select>
         </form>
       </div>
+      <div className="filter-colors colors">
+        <h3>Colors</h3>
+        <div className="filter-color-style">
+          {colorsData.map((curColor, index) => {
+            if (curColor === "all") {
+              return (
+                <button
+                  key={index}
+                  type="button"
+                  name="color"
+                  value={curColor}
+                  //  style={{backgroundColor:curColor}}
+                  onClick={updateFilterValue}
+                  className="color-all--style"
+                >
+                  All
+                </button>
+              );
+            }
+            return (
+              <button
+                key={index}
+                type="button"
+                name="color"
+                value={curColor}
+                style={{ backgroundColor: curColor }}
+                onClick={updateFilterValue}
+                className={color === curColor ? "btnStyle active" : "btnStyle"}
+              >
+                {color === curColor ? <FaCheck className="checkStyle" /> : null}
+              </button>
+            );
+          })}
+        </div>
+        <div className="filter_price">
+          <h3>Price</h3>
+          <p>
+            <FormatPrice price={price} />
+          </p>
+          <input
+            type="range"
+            name="price"
+            min={minPrice}
+            max={maxPrice}
+            value={price}
+            onChange={updateFilterValue}
+          />
+        </div>
+        <div className="filter-clear">
+          <Button className="btn" 
+           onClick={clearFilters}
+          >
+            Clear Filters</Button>
+        </div>
 
-    
-    </Wrapper> 
+      </div>
+    </Wrapper>
   );
 };
 

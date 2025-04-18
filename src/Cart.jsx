@@ -1,10 +1,85 @@
 import styled from "styled-components";
+import { useCartContext } from "./context/CartContext";
+import CartItem from "./components/CartItem";
+import { NavLink } from "react-router-dom";
+import { Button } from "./styles/Button";
+import FormatPrice from "./Helpers/FormatPrice";
 
 const Cart = () => {
-  return <Wrapper>
-    <p>cart</p>
-  </Wrapper>;
+  const { cart, clearCart, total_amount, shipping_fee } = useCartContext();
+  console.log(cart);
+
+  if (cart.length === 0) {
+    return (
+      <EmptyDiv>
+        <h3>Your cart is empty</h3>
+      </EmptyDiv>
+    );
+  }
+
+  return (
+    <Wrapper>
+      <div className="container">
+        <div className="cart_heading grid grid-five-column">
+          <p>Item</p>
+          <p className="cart-hide"></p>
+          <p>Quantity</p>
+          <p className="cart-hide">Subtotal</p>
+          <p>remove</p>
+        </div>
+        <hr />
+        <div className="cart-item">
+          {cart.map((curElem) => {
+            return <CartItem key={curElem.id} {...curElem} />;
+          })}
+        </div>
+        <hr />
+        <div className="cart-two-button">
+          <NavLink to="/products">
+            <Button>continue Shopping</Button>
+          </NavLink>
+          <Button className="btn btn-clear" onClick={clearCart}>
+            Clear Cart
+          </Button>
+        </div>
+        <div className="order-total--amount">
+          <div className="order-total--subdata">
+            <div>
+              <p>Subtotal:</p>
+              <p>
+                <FormatPrice price={total_amount} />
+              </p>
+            </div>
+            <div>
+              <p>Shipping fee: </p>
+              <p>
+                <FormatPrice price={shipping_fee} />
+              </p>
+            </div>
+            <hr />
+            <div>
+              <p>order total: </p>
+              <p>
+                <FormatPrice price={shipping_fee + total_amount} />
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Wrapper>
+  );
 };
+
+const EmptyDiv = styled.div`
+  display: grid;
+  place-items: center;
+  height: 50vh;
+  h3 {
+    font-size: 4.2rem;
+    text-transform: capitalize;
+    font-weight: 300;
+  }
+`;
 
 const Wrapper = styled.section`
   padding: 9rem 0;
